@@ -76,47 +76,89 @@
     <button onclick="drawer()" class="drawer-button-closed" id="drawer-button"><i class="fa-solid fa-bars" style="color: Dodgerblue; font-size: 3em;"></i></button>
     <div class="drawer-item-closed" id="drawer-chart-one"><canvas id="topic_chart" style="width: 100%; height: 100%;"></canvas>
     <script>
-      const data_topic = {
-        labels: {{ topic_lables | safe }},
-        datasets: [
-          {
-            label: "Topics",
-            data: {{ topic_values | safe }},
-            fill: true,
-            backgroundColor:[
-            'rgb(255, 99, 132)',
-            'rgb(54, 162, 235)',
-            'rgb(255, 205, 86)'
-          ],
-          hoverOffset: 4
+      const plugin = {
+        id: 'cursor',
+        defaults: {
+          width: 1,
+          color: '#FF4949',
+          dash: [0, 0],
+        },
+        afterInit: (chart, args, opts) => {
+          chart.corsair = {
+            x: 0,
+            y: 0,
           }
-        ]
-      };
-      
-      const options_topic = {
-        responsive: true,
-        aspectRatio:1.5,
-        plugins: {
-          legend: {
-            display: false
-          },
-          
-          title: {
-            display: true,
-            text: 'Tweets per Topic',
-            padding: {
-                top: 10,
-                bottom: 30
-            }
-          }
+        },
+        afterEvent: (chart, args) => {
+          const { inChartArea } = args
+          const { type, x, y } = args.event
+
+          chart.corsair = { x, y, draw: inChartArea }
+          chart.draw()
+        },
+        beforeDatasetsDraw: (chart, args, opts) => {
+          const { ctx } = chart
+          const { top, bottom, left, right } = chart.chartArea
+          const { x, y, draw } = chart.corsair
+          if (!draw) return
+
+          ctx.save()
+
+          ctx.beginPath()
+          ctx.lineWidth = opts.width
+          ctx.strokeStyle = opts.color
+          ctx.setLineDash(opts.dash)
+          ctx.moveTo(x, bottom)
+          ctx.lineTo(x, top)
+          ctx.stroke()
+
+          ctx.restore()
         }
       };
       
-      const config_topic = {
-        type: 'doughnut',
-        data: data_topic,
-        options: options_topic
-      };
+      new Chart(document.getElementById("topic_chart"), {
+        type: 'line',
+        data: {
+          labels: {{ date_labels | safe }},
+          datasets: [{ 
+              data: {{ topic_date_values | safe }},
+              label: "Topics by Day",
+              borderColor: "#3e95cd",
+              fill: false
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scaleShowLabels: false,
+          interaction: {
+            intersect: false,
+              mode: 'index'
+          },
+          scales: {
+            x: {
+              ticks: {
+                display: false
+              }
+            },
+            y: {
+              min:-1,
+              max:1
+            }
+          },
+          plugins: {
+            cursor: {
+              color: 'black',
+            },
+            title: {
+              display: true,
+              text: 'Tweets (Topic by Date)'
+            }
+          }
+        },
+        plugins: [plugin]
+      });
       
       const $chart_topic = document.getElementById("topic_chart");
       const chart_topic = new Chart($chart_topic, config_topic);
@@ -124,46 +166,6 @@
     </div>
     <div class="drawer-item-closed" id="drawer-chart-two"><canvas id="sentiment_chart" width="300" height="300" style="width: 100%"></canvas>
       <script>
-
-        const plugin = {
-          id: 'cursor',
-          defaults: {
-            width: 1,
-            color: '#FF4949',
-            dash: [0, 0],
-          },
-          afterInit: (chart, args, opts) => {
-            chart.corsair = {
-              x: 0,
-              y: 0,
-            }
-          },
-          afterEvent: (chart, args) => {
-            const { inChartArea } = args
-            const { type, x, y } = args.event
-  
-            chart.corsair = { x, y, draw: inChartArea }
-            chart.draw()
-          },
-          beforeDatasetsDraw: (chart, args, opts) => {
-            const { ctx } = chart
-            const { top, bottom, left, right } = chart.chartArea
-            const { x, y, draw } = chart.corsair
-            if (!draw) return
-  
-            ctx.save()
-  
-            ctx.beginPath()
-            ctx.lineWidth = opts.width
-            ctx.strokeStyle = opts.color
-            ctx.setLineDash(opts.dash)
-            ctx.moveTo(x, bottom)
-            ctx.lineTo(x, top)
-            ctx.stroke()
-  
-            ctx.restore()
-          }
-        };
         
         new Chart(document.getElementById("sentiment_chart"), {
           type: 'line',

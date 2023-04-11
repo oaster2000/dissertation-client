@@ -159,8 +159,7 @@ def topic_view(topics):
   date_labels = app.tweet_data.getDateLabels()
   date_values = app.tweet_data.getDateValues()
 
-  topic_lables = app.tweet_data.getTopicLabels()
-  topic_values = app.tweet_data.getTopicValues()
+  topic_date_values = app.tweet_data.getDateTopicData()
 
   polarity_values = app.tweet_data.getPolarityValues()
 
@@ -171,7 +170,7 @@ def topic_view(topics):
   m_topic.get_root().height = "720px"
   map_topic = f_topic.get_root()._repr_html_()
 
-  return render_template("topic.html", map=map_topic, date_labels=date_labels, date_values=date_values, topic_lables=topic_lables, topic_values=topic_values,
+  return render_template("topic.html", map=map_topic, date_labels=date_labels, date_values=date_values, topic_date_values=topic_date_values,
                             polarity_values=polarity_values, subjectivity_values=subjectivity_values, topics=topics)
 
 if __name__ == '__main__':

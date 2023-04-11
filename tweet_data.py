@@ -13,6 +13,7 @@ class TweetData:
         self.topic = dict()
 
         self.place_by_topic = dict()
+        self.topic_by_date = dict()
 
         response = requests.get(url = self.URL + "/date")
         self.dates = response.json()
@@ -30,6 +31,9 @@ class TweetData:
         self.place = response.json()
 
         response = requests.get(url = self.URL + "/place-topic")
+        self.place_by_topic = response.json()
+        
+        response = requests.get(url = self.URL + "/topic-date")
         self.place_by_topic = response.json()
 
         with open('/home/oaster/dissertation-client/data/location_data.csv', 'w+', encoding="utf8") as f:
@@ -90,3 +94,17 @@ class TweetData:
 
             for item in _data:
                 f.write(item + "," + str(_data.get(item)) + '\n')
+                
+    def getDateTopicData(self, topics):
+        values = []
+        topics.split(",")
+        _data = dict()
+        for item in self.topic_by_date:
+            for val in self.topic_by_date.get(item):
+                if val.casefold() in topics.casefold():
+                    _data[item] += self.topic_by_date.get(item).get(val)
+                    
+        for item in _data:
+            values.append(_data[item])
+        
+        print(values)
