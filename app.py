@@ -104,9 +104,8 @@ def index():
     return render_template("dashboard.html", map=f.get_root()._repr_html_(), date_labels=date_labels, date_values=date_values, topic_lables=topic_lables, topic_values=topic_values,
                             polarity_values=polarity_values, subjectivity_values=subjectivity_values)
 
-@app.route("/<topics>"
+@app.route("/<topics>")
 def topic_view(topics):
-
   f_topic = folium.Figure(width=1000, height=500)
   m_topic = folium.Map(location= [45, 38],
           tiles='openstreetmap',
