@@ -156,7 +156,6 @@ def topic_view(topics):
   date_values = app.tweet_data.getDateValues()
 
   topic_date_values = app.tweet_data.getDateTopicData(topics)
-  print(topic_date_values)
 
   polarity_values = app.tweet_data.getPolarityValues()
 

@@ -109,4 +109,4 @@ class TweetData:
         for item in _temp:
             values.append(_temp[item])
         
-        print(values)
+        return values
