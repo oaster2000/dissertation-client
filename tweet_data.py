@@ -99,13 +99,14 @@ class TweetData:
         values = []
         topics.split(",")
         _data = dict()
+        _temp = dict()
         for item in self.topic_by_date:
             _data = self.topic_by_date.get(item, dict())
             for val in self.topic_by_date.get(item):
                 if val.casefold() in topics.casefold():
-                    _data[item] = _data.get(item, 0) + self.topic_by_date.get(item, dict()).get(val, 0)
+                    _temp[item] = _data.get(item, 0) + self.topic_by_date.get(item, dict()).get(val, 0)
                     
-        for item in _data:
-            values.append(_data[item])
+        for item in _temp:
+            values.append(_temp[item])
         
         print(values)
