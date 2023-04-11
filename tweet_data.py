@@ -116,6 +116,7 @@ class TweetData:
         for item in self.topic:
             if item.casefold() in topics:
                 labels.append(item)
+        print(labels)
         return labels
 
 
@@ -124,4 +125,5 @@ class TweetData:
         for item in self.topic:
             if item.casefold() in topics:
                 values.append(self.topic[item])
+        print(values)
         return values
