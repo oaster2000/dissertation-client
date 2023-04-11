@@ -39,7 +39,7 @@ body{
 
 .drawer-closed{
     position:absolute;
-    top: 8.25%;
+    top: 10%;
     height: calc(75% - 20px);
     width: calc(1% - 20px);
     background-color: rgba(200, 200, 200);
@@ -53,7 +53,7 @@ body{
 
 .drawer-open{
     position:absolute;
-    top: 8.25%;
+    top: 10%;
     height: calc(75% - 20px);
     width: calc(25% - 20px);
     background-color: rgba(200, 200, 200);
