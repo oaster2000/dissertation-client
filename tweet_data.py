@@ -32,7 +32,7 @@ class TweetData:
         response = requests.get(url = self.URL + "/place-topic")
         self.place_by_topic = response.json()
         
-        with open('data/location_data.csv', 'w+', encoding="utf8") as f:
+        with open('/home/oaster/dissertation-client/data/location_data.csv', 'w+', encoding="utf8") as f:
             f.write("name,number" + '\n')
             for item in self.place:                
                 f.write(item + "," + str(self.place.get(item)) + '\n')
@@ -77,7 +77,7 @@ class TweetData:
     
     def getPlaceDataForTopics(self, topics):
         topics.split(",")
-        with open('data/query_location_data.csv', 'w+', encoding="utf8") as f:
+        with open('/home/oaster/dissertation-client/data/query_location_data.csv', 'w+', encoding="utf8") as f:
             f.write("name,number" + '\n')
             _data = dict()
             print(topics)

@@ -8,7 +8,7 @@ from tweet_data import TweetData
 class ClientApp(Flask):
   url = 'https://raw.githubusercontent.com/python-visualization/folium/master/examples/data'
   tweet_data = TweetData()
-  geo_data = pd.read_csv('data/location_data.csv', index_col=None, header=0)
+  geo_data = pd.read_csv('/home/oaster/dissertation-client/data/location_data.csv', index_col=None, header=0)
   country_geo = f'{url}/world-countries.json'
   country_df = gpd.read_file(country_geo, driver='GeoJSON')
   geo_df = country_df.merge(geo_data, on="name")
@@ -19,7 +19,7 @@ class ClientApp(Flask):
     self.geo_df = self.country_df.merge(self.geo_data, on="name")
     
   def resetGeoData(self):
-    self.geo_data = pd.read_csv('data/location_data.csv', index_col=None, header=0)
+    self.geo_data = pd.read_csv('/home/oaster/dissertation-client/data/location_data.csv', index_col=None, header=0)
     self.country_geo = f'{self.url}/world-countries.json'
     self.geo_df = self.country_df.merge(self.geo_data, on="name")
     self.been_queried = False
@@ -107,7 +107,7 @@ def topic_view(topics):
     topics = request.form.get('topics')
     
   app.tweet_data.getPlaceDataForTopics(topics)
-  app.geo_data = pd.read_csv('data/query_location_data.csv', index_col=None, header=0)
+  app.geo_data = pd.read_csv('/home/oaster/dissertation-client/data/query_location_data.csv', index_col=None, header=0)
   app.regenerateGeoData()
 
   f_topic = folium.Figure(width=1000, height=500)
