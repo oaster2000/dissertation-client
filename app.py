@@ -157,9 +157,8 @@ def topic_view(topics):
 
   topic_date_values = app.tweet_data.getDateTopicData(topics)
 
-  polarity_values = app.tweet_data.getPolarityValues()
-
-  subjectivity_values = app.tweet_data.getSubjectivityValues()
+  topic_lables = app.tweet_data.getTopicsLabels(topics)
+  topic_values = app.tweet_data.getTopicsValues(topics)
 
   # set the iframe width and height
   m_topic.get_root().width = "100%"
@@ -167,7 +166,7 @@ def topic_view(topics):
   map_topic = f_topic.get_root()._repr_html_()
 
   return render_template("topic.html", map=map_topic, date_labels=date_labels, date_values=date_values, topic_date_values=topic_date_values,
-                            polarity_values=polarity_values, subjectivity_values=subjectivity_values, topics=topics)
+                         topic_lables=topic_lables, topic_values=topic_values, topics=topics)
 
 if __name__ == '__main__':
         app.run(host='0.0.0.0')

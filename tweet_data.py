@@ -110,3 +110,18 @@ class TweetData:
             values.append(_temp[item])
         
         return values
+    
+    def getTopicsLabels(self, topics):
+        labels = []
+        for item in self.topic:
+            if item.casefold() in topics:
+                labels.append(item)
+        return labels
+
+
+    def getTopicsValues(self, topics):
+        values = []
+        for item in self.topic:
+            if item.casefold() in topics:
+                values.append(self.topic[item])
+        return values

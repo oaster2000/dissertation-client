@@ -160,56 +160,36 @@
       });
     </script>
     </div>
-    <div class="drawer-item-closed" id="drawer-chart-two"><canvas id="sentiment_chart" width="300" height="300" style="width: 100%"></canvas>
+    <div class="drawer-item-closed" id="drawer-chart-two"><canvas id="topic_breakdown_chart" width="300" height="300" style="width: 100%"></canvas>
       <script>
         
-        new Chart(document.getElementById("sentiment_chart"), {
-          type: 'line',
+        new Chart(document.getElementById("topic_breakdown_chart"), {
+          type: 'polarArea',
           data: {
-            labels: {{ date_labels | safe }},
+            labels: {{ topic_lables | safe }},
             datasets: [{ 
-                data: {{ polarity_values | safe }},
-                label: "Polarity",
-                borderColor: "#3e95cd",
-                fill: false
-              }, { 
-                data: {{ subjectivity_values | safe }},
-                label: "Subjectivity",
-                borderColor: "#8e5ea2",
-                fill: false
+                data: {{ topic_values | safe }},
+                label: "Topic",
+                backgroundColor:[
+                'rgb(255, 99, 132)',
+                'rgb(54, 162, 235)',
+                'rgb(255, 205, 86)'
               }
             ]
           },
           options: {
             responsive: true,
             maintainAspectRatio: false,
-            scaleShowLabels: false,
-            interaction: {
-              intersect: false,
-                mode: 'index'
-            },
-            scales: {
-              x: {
-                ticks: {
-                  display: false
-                }
-              },
-              y: {
-                min:-1,
-                max:1
-              }
-            },
             plugins: {
-              cursor: {
-                color: 'black',
+              legend: {
+                display: false
               },
               title: {
                 display: true,
-                text: 'Average Sentiment'
+                text: 'Topic Breakdown'
               }
             }
-          },
-          plugins: [plugin]
+          }
         });
         
       </script>
