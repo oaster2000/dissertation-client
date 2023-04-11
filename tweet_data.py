@@ -1,4 +1,4 @@
-import requests, jsonjson
+import requests, json
 
 class TweetData:
 
@@ -34,7 +34,7 @@ class TweetData:
         self.place_by_topic = response.json()
         
         response = requests.get(url = self.URL + "/topic-date")
-        self.place_by_topic = response.json()
+        self.topic_by_date = response.json()
 
         with open('/home/oaster/dissertation-client/data/location_data.csv', 'w+', encoding="utf8") as f:
             f.write("name,number" + '\n')
