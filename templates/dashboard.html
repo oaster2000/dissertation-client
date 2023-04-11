@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>COVD-19 Visual Dashboard</title>
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/base.css') }}">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://kit.fontawesome.com/a1ed8dc3ba.js" crossorigin="anonymous"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+  <script type="text/javascript">
+    function drawer() {
+      document.getElementById("drawer").classList.toggle('drawer-closed');
+      document.getElementById("drawer").classList.toggle('drawer-open');
+      document.getElementById("drawer-chart-one").classList.toggle('drawer-item-closed');
+      document.getElementById("drawer-chart-one").classList.toggle('drawer-item-open');
+      document.getElementById("drawer-chart-two").classList.toggle('drawer-item-closed');
+      document.getElementById("drawer-chart-two").classList.toggle('drawer-item-open');
+      document.getElementById("drawer-button").classList.toggle('drawer-button-closed');
+      document.getElementById("drawer-button").classList.toggle('drawer-button-open');
+    };
+  </script>  
+</head>
+
+<body>
+  <div class="header">
+    <a class="header-item home" href="/">COVD-19 Visual Dashboard</a>
+    <div class="header-item">
+    <form action="/" method="POST" id="form" autocomplete="off">
+      <div class="combobox dropdown withtextlist">
+        <input type="text" id="topics" name="topics">
+        <div tabindex="-1" class="downarrow"></div>
+        <select size="8" class="dropdown-content">
+          <option>Health</option>
+          <option>Lockdown</option>
+          <option>Masks</option>
+          <option>News</option>
+          <option>Politics</option>
+          <option>Social</option>
+          <option>Vaccines</option>
+        </select>
+        </div>
+        <button class="form-control" id="button">Search</button>
+    </form>
+      
+    <script>
+      function parentComboBox(el) {
+        for (el = el.parentNode; el != null && Array.prototype.indexOf.call(el.classList, "combobox") <= -1;)
+          el = el.parentNode;
+        return el;
+      }
+      
+      $(".combobox.withtextlist > select").change(function() { 
+        var textbox = parentComboBox(this).firstElementChild;
+        let split = []
+        if(textbox.value != ''){
+          split = textbox.value.split(",");
+        }
+        if(split.includes(this[this.selectedIndex].text)){
+          split = split.filter(e => e !== this[this.selectedIndex].text);
+          textbox.value = split.toString();
+        }else{
+          if(split.length == 0){
+            textbox.value += this[this.selectedIndex].text;
+          }else{
+            textbox.value += ',' + this[this.selectedIndex].text;
+          }
+        }
+        
+        this[this.selectedIndex].selected = false
+      });
+    </script>
+    </div>
+  </div>
+  <div class="map">{{ map|safe }}</div>
+  <div class="drawer-closed" id="drawer">
+    <button onclick="drawer()" class="drawer-button-closed" id="drawer-button"><i class="fa-solid fa-bars" style="color: Dodgerblue; font-size: 3em;"></i></button>
+    <div class="drawer-item-closed" id="drawer-chart-one"><canvas id="topic_chart" style="width: 100%; height: 100%;"></canvas>
+    <script>
+      const data_topic = {
+        labels: {{ topic_lables | safe }},
+        datasets: [
+          {
+            label: "Topics",
+            data: {{ topic_values | safe }},
+            fill: true,
+            backgroundColor:[
+            'rgb(255, 99, 132)',
+            'rgb(54, 162, 235)',
+            'rgb(255, 205, 86)'
+          ],
+          hoverOffset: 4
+          }
+        ]
+      };
+      
+      const options_topic = {
+        responsive: true,
+        aspectRatio:1.5,
+        plugins: {
+          legend: {
+            display: false
+          },
+          
+          title: {
+            display: true,
+            text: 'Tweets per Topic',
+            padding: {
+                top: 10,
+                bottom: 30
+            }
+          }
+        }
+      };
+      
+      const config_topic = {
+        type: 'doughnut',
+        data: data_topic,
+        options: options_topic
+      };
+      
+      const $chart_topic = document.getElementById("topic_chart");
+      const chart_topic = new Chart($chart_topic, config_topic);
+    </script>
+    </div>
+    <div class="drawer-item-closed" id="drawer-chart-two"><canvas id="sentiment_chart" width="300" height="300" style="width: 100%"></canvas>
+      <script>
+
+        const plugin = {
+          id: 'cursor',
+          defaults: {
+            width: 1,
+            color: '#FF4949',
+            dash: [0, 0],
+          },
+          afterInit: (chart, args, opts) => {
+            chart.corsair = {
+              x: 0,
+              y: 0,
+            }
+          },
+          afterEvent: (chart, args) => {
+            const { inChartArea } = args
+            const { type, x, y } = args.event
+  
+            chart.corsair = { x, y, draw: inChartArea }
+            chart.draw()
+          },
+          beforeDatasetsDraw: (chart, args, opts) => {
+            const { ctx } = chart
+            const { top, bottom, left, right } = chart.chartArea
+            const { x, y, draw } = chart.corsair
+            if (!draw) return
+  
+            ctx.save()
+  
+            ctx.beginPath()
+            ctx.lineWidth = opts.width
+            ctx.strokeStyle = opts.color
+            ctx.setLineDash(opts.dash)
+            ctx.moveTo(x, bottom)
+            ctx.lineTo(x, top)
+            ctx.stroke()
+  
+            ctx.restore()
+          }
+        };
+        
+        new Chart(document.getElementById("sentiment_chart"), {
+          type: 'line',
+          data: {
+            labels: {{ date_labels | safe }},
+            datasets: [{ 
+                data: {{ polarity_values | safe }},
+                label: "Polarity",
+                borderColor: "#3e95cd",
+                fill: false
+              }, { 
+                data: {{ subjectivity_values | safe }},
+                label: "Subjectivity",
+                borderColor: "#8e5ea2",
+                fill: false
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scaleShowLabels: false,
+            interaction: {
+              intersect: false,
+                mode: 'index'
+            },
+            scales: {
+              x: {
+                ticks: {
+                  display: false
+                }
+              },
+              y: {
+                min:-1,
+                max:1
+              }
+            },
+            plugins: {
+              cursor: {
+                color: 'black',
+              },
+              title: {
+                display: true,
+                text: 'Average Sentiment'
+              }
+            }
+          },
+          plugins: [plugin]
+        });
+        
+      </script>
+      </div>
+  </div>
+  <div class="graph">
+    <canvas id="lineChart" style="width: 100%; height: 5%;"></canvas>
+    <script>
+      
+      const data = {
+        labels: {{ date_labels | safe }},
+        datasets: [
+          {
+            label: "Tweets",
+            data: {{ date_values | safe }},
+            fill: true,
+            borderColor: "rgb(75, 192, 192)",
+            lineTension: 0.15
+          }
+        ]
+      };
+      
+      const options = {
+        responsive: false,
+          scaleShowLabels: false,
+            onClick: (e) => {
+              const canvasPosition = Chart.helpers.getRelativePosition(e, chart);
+
+              // Substitute the appropriate scale IDs
+              const dataX = chart.scales.x.getValueForPixel(canvasPosition.x);
+            },
+              interaction: {
+          intersect: false,
+            mode: 'index'
+        },
+        scales: {
+          x: {
+            ticks: {
+              display: false
+            }
+          },
+          y: {
+            ticks: {
+              display: false
+            }
+          }
+        },
+        plugins: {
+          legend: {
+            display: false
+          },
+          cursor: {
+            color: 'black',
+          }
+        }
+      };
+
+      const config = {
+        type: 'line',
+        data,
+        options,
+        plugins: [plugin],
+      };
+
+      const $chart = document.getElementById("lineChart");
+      const chart = new Chart($chart, config);
+    </script>
+  </div>
+</body>
+
+</html>

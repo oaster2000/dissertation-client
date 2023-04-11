@@ -1,0 +1,231 @@
+.header{
+    height: 5%;
+    width: 100%;
+    background-color: rgb(163, 163, 163);
+    display: flex;
+    flex-direction: row;
+}
+
+.map{
+    height: 90%;
+    width: 100%;
+    background-color: rgb(163, 163, 163);
+}
+
+.header-item.home{
+    margin:10px;
+    display: block;
+    text-decoration: none;
+    background-color: rgb(207, 207, 207);
+    border-radius: 5px;
+    text-align: center;
+    flex: 0 1 auto;
+}
+
+.header-item{
+    padding: 15px 20px 15px 20px;
+    font-family: Calibri, 'Trebuchet MS', sans-serif;
+    font-size: 2rem;
+    color: rgb(59, 59, 59);
+    font-weight: bolder;
+    flex: 2 1 auto;
+}
+
+body{
+    margin: 0px;
+    z-index: -1;
+    overflow-x: hidden;
+}
+
+.drawer-closed{
+    position:absolute;
+    top: 8.25%;
+    height: calc(75% - 20px);
+    width: calc(1% - 20px);
+    background-color: rgba(200, 200, 200);
+    left: 99%;
+    display: flex;
+    flex-direction: column;
+    z-index: 100;
+    padding: 10px;
+    transition: width 1s, left 1s;
+}
+
+.drawer-open{
+    position:absolute;
+    top: 8.25%;
+    height: calc(75% - 20px);
+    width: calc(25% - 20px);
+    background-color: rgba(200, 200, 200);
+    left: 75%;
+    display: flex;
+    flex-direction: column;
+    z-index: 100;
+    padding: 10px;
+    transition: width 1s, left 1s;
+}
+
+.drawer-button-closed{
+    position:absolute;
+    left: calc(1% - 45px);
+    top: calc(100% - 60px);
+    height: 50px;
+    width: 50px;
+    display: flex;
+    flex-direction: column;
+    z-index: 101;
+}
+
+.drawer-button-open{
+    position:absolute;
+    left: calc(1% - 50px);
+    top: calc(100% - 60px);
+    height: 50px;
+    width: 50px;
+    display: flex;
+    flex-direction: column;
+    z-index: 101;
+}
+
+.drawer-item-closed{
+    flex: 0 1 50%;
+    animation: fadeOut 3s;
+}
+
+.drawer-item-open{
+    flex: 0 1 50%;
+    width: 100%; 
+    animation: fadeIn 3s; 
+}
+
+#drawer-chart-two.drawer-item-closed{
+    flex: 0 1 50%;
+    animation: fadeOut 3s;
+}
+
+#drawer-chart-two.drawer-item-open{
+    flex: 0 1 50%;
+    width: 100%; 
+    animation: fadeIn 1s; 
+}
+
+.drawer-break{
+    flex: 0 5 auto;
+}
+
+@keyframes fadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
+  
+@keyframes fadeOut {
+    0% { opacity: 1; }
+    100% { opacity: 0; }
+}
+
+.combobox, .dropdown { 
+    /* "relative" and "inline-block" (or just "block") are needed
+       here so that "absolute" works correctly in children */
+    position: relative;
+    display: inline-block;
+    background-color: rgba(200, 200, 200);
+}
+
+.combobox {
+    border: 1px solid #999;
+    padding-right: 1.25em; /* leave room for ▾ */
+    width: calc(20% + 250px);;
+} 
+  
+.combobox > .downarrow, .dropdown > .downarrow {
+    display: block;     /* Allow margin/border/padding/size */
+    position: absolute; /* Outside normal flow */
+    top: 0;    /* Align top of downarrow with top edge of combobox */
+    bottom: 0; /* Align bottom of downarrow with bottom of combobox */
+    right: 0; /*Align right edge of downarrow with right of combobox*/
+    width: 1.25em;
+
+    cursor: default; /* Use arrow cursor instead of I-beam */
+    nav-index: -1; /* sets tabindex, nonfunctional in most browsers */
+    border-width: 0;        /* disable by default */
+    border-color: inherit;  /* copy parent border */
+    border-left: inherit;   /* copy parent border */
+}
+
+.combobox:not(.dropdown) > .downarrow {
+    border-left-width: 1px;
+}
+
+.downarrow:empty::before {
+    content: '▾';
+}
+
+.downarrow::before, .downarrow > *:only-child {
+    text-align: center; /* Center horizontally */
+    /* vertical centering trick */
+    position: relative; /* Allow the element to be shifted */
+    top: 50%;           /* Move down by 50% of container size */
+    transform: translateY(-50%); /* Move up by 50% of element size */
+    display: block;     /* `transform` requires block/inline-block */
+}
+
+.dropdown-content{
+    font-size: 1.25rem;
+}
+
+.combobox > input {
+    border: 0; /* combo box already has a border */
+    font-size: 1.5rem;
+}
+
+.combobox > *:first-child {
+    width: 100%;
+    background-color: rgba(200, 200, 200);
+    box-sizing: border-box; /* so 100% includes border & padding */
+    display: inline-block;
+}
+
+.dropdown > *:last-child,
+.combobox > *:last-child,
+.combobox > .sticky:last-child:hover,
+.dropdown > .sticky:last-child:hover {
+    display: block;
+    position: absolute;     /* outside document flow */
+    left: 0;          /* Left side of popup = left side of parent */
+    top: 100%;        /* Top of popup = 100% below top of parent */
+    border: 1px solid #999; /* gray border */
+    background-color: #fff; /* white background */
+    box-shadow: 1px 2px 4px 1px #4448; /* shadow behind */
+    z-index: 9999;          /* draw on top of everything else */
+    min-width: 100%;        /* >= 100% as wide as its container */
+    box-sizing: border-box; /* width includes border & padding */
+    opacity: 0;
+    transition: 0.4s;
+    pointer-events: none;  
+}
+
+.combobox > .downarrow:focus ~ *:last-child,
+.dropdown:focus > *:last-child,
+.dropdown > *:focus ~ *:last-child,
+.combobox > *:last-child:focus-within,
+.dropdown > *:last-child:focus-within {
+  display: block;
+  top: 100%;
+  opacity: 1;
+  transition: 0.15s;
+  pointer-events: auto;
+}
+
+.dropdown:not(.sticky) > *:not(:last-child):focus,
+.downarrow:focus,
+.dropdown:focus {
+  pointer-events: none; /* Causes second click to close */
+}
+
+.combobox {
+    margin: 5px;
+}
+
+.downarrow:focus {
+    outline: 2px solid #48F8;
+}
