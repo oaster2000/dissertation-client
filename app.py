@@ -34,6 +34,9 @@ app = ClientApp(__name__)
 def index():
   if request.method == 'POST':
     topics = request.form.get('topics')
+    app.tweet_data.getPlaceDataForTopics(topics)
+    app.geo_data = pd.read_csv('/home/oaster/dissertation-client/data/query_location_data.csv', index_col=None, header=0)
+    app.regenerateGeoData()
     return redirect(url_for('topic_view',topics = topics))
   else:
     if app.been_queried:
@@ -101,14 +104,8 @@ def index():
     return render_template("dashboard.html", map=f.get_root()._repr_html_(), date_labels=date_labels, date_values=date_values, topic_lables=topic_lables, topic_values=topic_values,
                             polarity_values=polarity_values, subjectivity_values=subjectivity_values)
 
-@app.route("/<topics>", methods=['GET','POST'])
+@app.route("/<topics>"
 def topic_view(topics):
-  if request.method == 'POST':
-    topics = request.form.get('topics')
-
-  app.tweet_data.getPlaceDataForTopics(topics)
-  app.geo_data = pd.read_csv('/home/oaster/dissertation-client/data/query_location_data.csv', index_col=None, header=0)
-  app.regenerateGeoData()
 
   f_topic = folium.Figure(width=1000, height=500)
   m_topic = folium.Map(location= [45, 38],
